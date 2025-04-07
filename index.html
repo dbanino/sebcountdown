@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PTL Corgination</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Georgia', serif;
+      color: #2c2c2c;
+      background-color: #4682b4;
+    }
+
+    body::before {
+      content: '✨🎉⭐🎊💫✨🎇⭐🎆🎉✨⭐🎊✨💫🎉⭐';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      font-size: 2rem;
+      color: white;
+      opacity: 0.2;
+      pointer-events: none;
+      z-index: 0;
+      display: block;
+      line-height: 3rem;
+      white-space: pre-wrap;
+      padding: 1rem;
+      font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+      animation: twinkle 10s linear infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: translateY(0); }
+      50% { opacity: 0.35; transform: translateY(-10px); }
+    }
+
+    .corgi, .snoopy, .emoji {
+      position: absolute;
+      width: 100px;
+      animation: floatThing 10s linear;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .queen {
+      position: absolute;
+      width: 120px;
+      z-index: 11;
+      pointer-events: none;
+    }
+
+    @keyframes floatThing {
+      0% {
+        transform: translate(-150px, 0);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translate(100vw, -100vh);
+        opacity: 0;
+      }
+    }
+
+    #play-music {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 12px 20px;
+      font-size: 18px;
+      background-color: white;
+      border: 3px solid black;
+      border-radius: 12px;
+      z-index: 200;
+      cursor: pointer;
+      display: none;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+    }
+
+    #countdown-container {
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(255, 255, 255, 0.85);
+      border: 4px solid #5c3d99;
+      padding: 30px 40px;
+      border-radius: 25px;
+      z-index: 99;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    #countdown-container h2 {
+      margin: 0 0 15px;
+      font-size: 32px;
+    }
+
+    #countdown {
+      font-size: 48px;
+      font-weight: bold;
+      color: #2c2c2c;
+    }
+
+    #monty {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      z-index: 1000;
+      display: none;
+      animation: fadeIn 2s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div id="countdown-container">
+    <h2>PTL ASF 🎉👑🇬🇧🐶🫖🎊</h2>
+    <div id="countdown">Loading...</div>
+  </div>
+
+  <img id="monty" src="monte.gif" alt="Monty Python">
+
+  <audio id="bark-sound" src="bark.mp3" preload="auto"></audio>
+  <audio id="bg-music" src="music.mp3" preload="auto" loop></audio>
+
+  <button id="play-music">Play Music 🎵</button>
+
+  <script>
+    const totalCorgis = 5;
+    const snoopyOptions = ['snoopy.gif', 'snoopy1.gif', 'snoopy2.gif'];
+    const emojiOptions = ['✨', '🎉', '🎊', '⭐', '💫', '🎇', '🎆'];
+    const barkSound = document.getElementById('bark-sound');
+    const bgMusic = document.getElementById('bg-music');
+    const playBtn = document.getElementById('play-music');
+    const countdownEl = document.getElementById('countdown');
+    const monty = document.getElementById('monty');
+
+    let countdownOver = false;
+
+    window.addEventListener('load', () => {
+      bgMusic.volume = 0.4;
+      bgMusic.play().catch(() => {
+        playBtn.style.display = 'block';
+      });
+
+      spawnMultipleQueens(4);
+      spawnSnoopys(4);
+    });
+
+    playBtn.addEventListener('click', () => {
+      bgMusic.play();
+      playBtn.style.display = 'none';
+    });
+
+    function spawnCorgi() {
+      const corgiNum = Math.floor(Math.random() * totalCorgis) + 1;
+      const corgi = document.createElement('img');
+      corgi.src = `corgi${corgiNum}.gif`;
+      corgi.className = 'corgi';
+      randomPosition(corgi);
+      document.body.appendChild(corgi);
+
+      if (Math.random() < 0.5) {
+        barkSound.currentTime = 0;
+        barkSound.play();
+      }
+
+      setTimeout(() => corgi.remove(), 10000);
+    }
+
+    function spawnSnoopys(n) {
+      for (let i = 0; i < n; i++) {
+        const s = document.createElement('img');
+        s.src = snoopyOptions[Math.floor(Math.random() * snoopyOptions.length)];
+        s.className = 'snoopy';
+        randomPosition(s);
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 10000);
+      }
+    }
+
+    function spawnEmoji() {
+      const e = document.createElement('div');
+      e.textContent = emojiOptions[Math.floor(Math.random() * emojiOptions.length)];
+      e.className = 'emoji';
+      e.style.fontSize = `${30 + Math.random() * 20}px`;
+      randomPosition(e);
+      document.body.appendChild(e);
+      setTimeout(() => e.remove(), 10000);
+    }
+
+    function randomPosition(el) {
+      el.style.left = `${Math.random() * 100}vw`;
+      el.style.top = `${Math.random() * 100}vh`;
+      el.style.animationDuration = `${4 + Math.random() * 4}s`;
+    }
+
+    setInterval(() => {
+      if (!countdownOver) {
+        spawnCorgi();
+        spawnEmoji();
+      }
+    }, 500);
+
+    function spawnMultipleQueens(count) {
+      for (let i = 0; i < count; i++) {
+        const queen = document.createElement('img');
+        queen.src = 'queen.png';
+        queen.className = 'queen';
+        queen.style.left = `${Math.random() * 90}vw`;
+        queen.style.top = `${Math.random() * 90}vh`;
+        document.body.appendChild(queen);
+      }
+    }
+
+    function corgiExplosion() {
+      for (let i = 0; i < 150; i++) {
+        setTimeout(spawnCorgi, i * 30);
+      }
+      spawnSnoopys(6);
+    }
+
+    const targetDate = new Date('2025-04-11T03:59:00Z');
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0 && !countdownOver) {
+        countdownOver = true;
+        countdownEl.innerText = "🎉🎆👑 The PTL ASF has begun! Let the corgination commence! 🐶🇬🇧🎊";
+        corgiExplosion();
+        monty.style.display = 'block';
+        return;
+      }
+
+      if (!countdownOver) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        countdownEl.innerText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
+
